@@ -1,0 +1,38 @@
+# Build: docker build -f docker/dockerfile.release -t production .
+# BuildX: docker buildx build -f docker/dockerfile.release -t production --platform linux/amd64,linux/arm64,linux/arm/v7 --push .
+# Run: docker run -it --rm -p 3000:3000 -v $(pwd):/app  --env-file .env production
+FROM node:18 as base
+WORKDIR /app
+COPY package*.json ./
+
+FROM base as dependencies
+ENV NODE_ENV production
+RUN npm install
+
+FROM base as builder
+ENV NODE_ENV development
+RUN npm install
+COPY . .
+RUN npm run generate
+RUN npm run build
+
+FROM base as release
+ENV NODE_ENV production
+# Install pm2 globally
+RUN npm install -g pm2
+COPY --from=dependencies /app/package.json ./package.json
+RUN true
+COPY --from=dependencies /app/package-lock.json ./package-lock.json
+RUN true
+COPY --from=dependencies /app/node_modules ./node_modules
+RUN true
+COPY --from=builder /app/dist ./dist
+RUN true
+COPY --from=builder /app/prisma ./prisma
+RUN true
+COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
+RUN true
+COPY --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
+RUN true
+EXPOSE ${PORT:-3000}
+CMD ["node", "--max-old-space-size=3072", "dist/server.js"]

@@ -1,0 +1,64 @@
+version: "3.9"
+services:
+  nodejs:
+    image: boilerplate/api
+    container_name: boilerplate-api
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - ./dist:/app/dist
+    build:
+      context: .
+      dockerfile: ./docker/dev.dockerfile
+      args:
+        - NODE_ENV=development
+        - PORT=${PORT}
+    depends_on:
+      - database
+      - redis
+  # Database
+  database:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: boilerplate-database
+    restart: always
+    ports:
+      - ${POSTGRES_PORT}:5432
+    expose:
+      - ${POSTGRES_PORT}
+    env_file:
+      - ./docker/database/.env.database.dev
+    volumes:
+      - ./docker/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/database/data:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    links:
+      - database
+  redis:
+    image: redis
+    container_name: boilerplate-redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+  stripe:
+    image: stripe/stripe-cli
+    container_name: boilerplate-stripe
+    restart: always
+    volumes:
+      - ./docker/stripe:/root/.config/configstore/stripe.yaml
+    command: "listen --api-key ${STRIPE_SECRET_KEY} --forward-to nodejs:${PORT}/payment/webhook"
+networks:
+  callto:
+    driver: bridge
