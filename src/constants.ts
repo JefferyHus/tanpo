@@ -94,56 +94,6 @@ export const PROFILE_SERVICE_MESSAGES = {
   PROFILE_UPDATED: 'Profile Updated',
 };
 
-// Services Success Messages
-export const SERVICES_MESSAGES = {
-  SERVICE_CREATED: 'Service Created',
-  SERVICE_DELETED: 'Service Deleted',
-  SERVICE_ACTIVATED: 'Service Activated',
-  SERVICE_DEACTIVATED: 'Service Deactivated',
-  SERVICE_UPDATED: 'Service Updated',
-};
-
-// Services Error Messages
-export const SERVICES_ERRORS = {
-  SERVICE_NOT_FOUND: 'Service Not Found',
-  SERVICE_ALREADY_EXISTS: 'Service Already Exists',
-  COULD_NOT_CREATE_SERVICE: 'Could Not Create Service',
-  COULD_NOT_DELETE_SERVICE: 'Could Not Delete Service',
-  COULD_NOT_ACTIVATE_SERVICE: 'Could Not Activate Service',
-  COULD_NOT_DEACTIVATE_SERVICE: 'Could Not Deactivate Service',
-  COULD_NOT_UPDATE_SERVICE: 'Could Not Update Service',
-  COULD_NOT_LIST_SERVICES: 'Could Not List Services',
-};
-
-// Service Planning Success Messages
-export const SERVICE_PLANNING_MESSAGES = {
-  SERVICE_PLANNING_CREATED: 'Service Planning Created',
-  SERVICE_PLANNING_DELETED: 'Service Planning Deleted',
-  SERVICE_PLANNING_ACTIVATED: 'Service Planning Activated',
-  SERVICE_PLANNING_DEACTIVATED: 'Service Planning Deactivated',
-  SERVICE_PLANNING_UPDATED: 'Service Planning Updated',
-  SERVICE_PLANNING_RESERVED: 'Service Planning Reserved',
-  SERVICE_PLANNING_UNRESERVED: 'Service Planning Unreserved',
-};
-
-// Service Planning Error Messages
-export const SERVICE_PLANNING_ERRORS = {
-  SERVICE_PLANNING_NOT_FOUND: 'Service Planning Not Found',
-  SERVICE_PLANNING_ALREADY_EXISTS: 'Service Planning Already Exists',
-  COULD_NOT_CREATE_SERVICE_PLANNING: 'Could Not Create Service Planning',
-  COULD_NOT_DELETE_SERVICE_PLANNING: 'Could Not Delete Service Planning',
-  COULD_NOT_ACTIVATE_SERVICE_PLANNING: 'Could Not Activate Service Planning',
-  COULD_NOT_DEACTIVATE_SERVICE_PLANNING:
-    'Could Not Deactivate Service Planning',
-  COULD_NOT_UPDATE_SERVICE_PLANNING: 'Could Not Update Service Planning',
-  COULD_NOT_LIST_SERVICE_PLANNINGS: 'Could Not List Service Plannings',
-  COULD_NOT_RESERVE_SERVICE_PLANNING: 'Could Not Reserve Service Planning',
-  COULD_NOT_GET_SERVICE_PLANNINGS_BY_AGENT_ID:
-    'Could Not Get Service Plannings By Agent Id',
-  COULD_NOT_GET_SERVICE_PLANNINGS_BY_SERVICE_ID:
-    'Could Not Get Service Plannings By Service Id',
-};
-
 // Generic Error Messages
 export const GENERIC_ERRORS = {
   SERVER_ERROR: 'Server Error',
