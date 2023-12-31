@@ -1,7 +1,3 @@
-Certainly! Here's the updated markdown documentation with TypeScript usage examples for each utility function:
-
----
-
 # Logger Utilities Documentation
 
 ## Overview
