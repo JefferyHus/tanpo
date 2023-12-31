@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Prefix for your containers
-prefix="trini-"
+prefix="tanpo-"
 
 # Stop and remove containers
 docker ps -a | grep "$prefix" | awk '{print $1}' | xargs -I {} docker stop {}

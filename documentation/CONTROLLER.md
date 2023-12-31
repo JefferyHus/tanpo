@@ -136,10 +136,16 @@ export class UsersController {
 
 ## Best Practices
 
-- Controllers should be as thin as possible. They should only be responsible for handling the requests and responses of a resource.
-- Controllers should not have any business logic. They should only call the service methods.
-- Controllers should not have any database logic. They should only call the service methods.
-- Controllers should not have any validation logic. They should only call the service methods.
-- Controllers should always be decorated with the `@Service` decorator. This will allow the controller to be injected with the service instance.
-- Controllers methods should always throw an error if something goes wrong. This will allow the error handler to catch the error and send the appropriate response.
-- Controllers methods should use the http status codes to send the appropriate response.
+1. **Controllers Should Be Thin**: Controllers should be as thin as possible, focusing primarily on handling the requests and responses for a resource. They should delegate business and database logic to other layers, such as services.
+
+2. **No Business Logic in Controllers**: Controllers should not contain business logic. Instead, they should call methods from the service layer, where business logic is handled.
+
+3. **No Database Logic in Controllers**: Controllers should not include database logic. Database interactions should be managed by the service layer or data access layers.
+
+4. **Limited Validation Logic in Controllers**: Controllers should handle basic request validation, such as checking the presence of required fields. More complex validation should be delegated to the service layer or specialized middleware.
+
+5. **Appropriate Use of Decorators**: Controllers should be decorated with `@Service` decorator which is generally used for dependency injection.
+
+6. **Error Handling in Controller Methods**: Controllers should handle errors gracefully. While they can throw errors, they should do so in a manner consistent with the application's overall error handling strategy, allowing global error handlers to catch and process these errors effectively.
+
+7. **Use HTTP Status Codes Appropriately**: Controller methods should use HTTP status codes effectively to indicate the outcome of a request, such as `200 OK` for successful requests, `404 Not Found` for missing resources, and `500 Internal Server Error` for server errors.

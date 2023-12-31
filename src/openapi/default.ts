@@ -14,3 +14,5 @@ export const AuthorizationSchema = z.string().openapi({
     example: 'Bearer <token>',
   },
 });
+
+export default z;

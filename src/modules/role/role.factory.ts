@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 
 import { Factory } from '@/core/classes/database/factory.class';
 import { LogLevelsEnum } from '@/core/classes/logger/logger.types';

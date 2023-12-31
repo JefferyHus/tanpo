@@ -2,11 +2,7 @@ import { Prisma, PrismaClient, Profile } from '@prisma/client';
 import { Service } from 'typedi';
 
 import { Repository } from '@/core/classes/database/repository.class';
-import {
-  FilterQuery,
-  ManyArgs,
-  UpdateQuery,
-} from '@/core/classes/database/types';
+import { ManyArgs } from '@/core/classes/database/types';
 
 @Service()
 export class ProfileRepository extends Repository<Profile> {

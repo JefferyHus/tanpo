@@ -1,26 +1,24 @@
 # Error Handling
 
-Inside the `/src/core/classes/errors` folder you will find all the error classes that are used in the application. Each error class extends the `BaseError` class, which is a custom error class that extends the native `Error` class.
+## Overview
+Inside the `/src/core/classes/errors` folder, you'll find all the error classes used in the application. Each error class extends `BaseError`, which itself extends the native `Error` class. The `BaseError` class includes a `toJSON` method that returns a JSON object with the error's `name`, `message`, and `stack` properties, useful for sending error responses to the client.
 
-The `BaseError` class has a `toJSON` method that returns a JSON object with the error's `name`, `message` and `stack` properties. This is useful when you want to send an error response to the client. This should be done your last resort, as you should always try to handle errors in the application and return a proper response to the client.
+## Error Categories
+Errors are classified into three categories:
 
-Error are classified in 3 categories:
+- **Entity Errors**: Thrown for issues related to entities, such as `EntityAlreadyExistsError`, `EntityNotFoundError`, and `InvalidEntityPropertyError`.
+- **Session Errors**: Thrown for session-related issues, such as `SessionNotFoundError` and `SessionExpiredError`.
+- **HTTP Errors**: Thrown for HTTP request issues, such as `HttpNotFoundError`, `HttpMethodNotAllowedError`, and `HttpUnprocessableEntityError`. These errors also include an additional `data` property for error context.
 
-- **Entity Errors**: These errors are thrown when an entity is not found or when an entity is not valid. For example, when you try to create a new user with an email that already exists in the database, an `EntityAlreadyExistsError` is thrown. When you try to update a user that does not exist in the database, an `EntityNotFoundError` is thrown. When you try to create a new user with an invalid email, an `InvalidEntityPropertyError` or `InvalidEntityPropertyStateError` is thrown.
-
-- **Session Errors**: These errors are thrown when a session is not valid. For example, when you try to access a protected route without a valid session, a `SessionNotFoundError` is thrown. When you try to access a protected route with an expired session, a `SessionExpiredError` is thrown.
-
-- **HTTP Errors**: These errors are thrown when a request is not valid. For example, when you try to access a route that does not exist, a `HttpNotFoundError` is thrown. When you try to access a route with a method that is not allowed, a `HttpMethodNotAllowedError` is thrown. When you try to access a route with a body that is not valid, a `HttpUnprocessableEntityError` is thrown. This type of erro has also an additional `data` property that contains the error context.
-
-The above error categories can be used in different contexts. The `EntityErrors` are used in the `src/modules/[feature]/[feature].service.ts` files. The `SessionErrors` are used in the `src/core/middlewares/session.middleware.ts` file. The `HttpErrors` are used in the `src/modules/[feature]/[feature].controller.ts` file.
+## Usage Contexts
+- `EntityErrors` are used in service files (`src/modules/[feature]/[feature].service.ts`).
+- `SessionErrors` are used in middleware files (`src/core/middlewares/session.middleware.ts`).
+- `HttpErrors` are used in controller files (`src/modules/[feature]/[feature].controller.ts`).
 
 ## Error Handling Example
-
-Let's say that you want to create a new user with an email that already exists in the database. The `src/modules/user/user.service.ts` file will throw an `EntityAlreadyExistsError` error.
-
+### Service Layer (User Creation Example)
 ```ts
 // src/modules/user/user.service.ts
-
 import { EntityAlreadyExistsError } from '@/core/classes/errors/entity.error';
 import { UserRepository } from './user.repository';
 
@@ -40,11 +38,9 @@ class UserService {
 }
 ```
 
-The `src/modules/user/user.controller.ts` file will catch the error and send a response to the client.
-
+### Controller Layer (Error Handling)
 ```ts
 // src/modules/user/user.controller.ts
-
 import { EntityAlreadyExistsError } from '@/core/classes/errors';
 import { HttpConflictError } from '@/core/classes/errors/http.error';
 
@@ -57,10 +53,22 @@ class UserController {
     try {
       return await this.userService.create(request.body);
     } catch (error) {
-      if (error instanceof EntityAlreadyExistsError) { // <-- This is the important part, it can be any error class or even just the BaseError class. This part will be taken care of by the error handler.
+      if (error instanceof EntityAlreadyExistsError) {
         return response.status(error.status).json(error.toJSON());
       }
     }
   }
 }
 ```
+
+### Global Error Handler Workflow
+The boilerplate includes a global error handler, which is the recommended default unless a custom formatted error response is required. This handler maintains a consistent response schema and proper formatting.
+
+1. The handler catches any thrown error within the application.
+2. It logs the error details, including request query, params, body, and headers.
+3. If the error is an instance of `BaseError`, it responds with the corresponding status code and error details.
+4. Prisma errors (identified by an error code starting with 'P') are handled with a `BAD_REQUEST` response.
+5. Other instances of `Error` result in a `BAD_REQUEST` response with detailed information.
+6. If the error doesn't fit the above categories, an `INTERNAL_SERVER_ERROR` response is sent.
+
+This global error handler ensures that all errors are processed uniformly, providing clear and informative feedback to the client.

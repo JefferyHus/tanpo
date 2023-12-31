@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   nodejs:
-    image: trini/api
-    container_name: trini-api
+    image: tanpo/api
+    container_name: tanpo
     restart: always
     env_file:
       - .env
@@ -24,7 +24,7 @@ services:
   # Database
   database:
     image: postgres:15-alpine
-    container_name: trini-database
+    container_name: tanpo-database
     restart: always
     ports:
       - ${POSTGRES_PORT}:5432
@@ -37,7 +37,7 @@ services:
       - ./docker/database/data:/var/lib/postgresql/data
   adminer:
     image: adminer
-    container_name: trini-adminer
+    container_name: tanpo-adminer
     restart: always
     ports:
       - 8080:8080
@@ -45,7 +45,7 @@ services:
       - database
   redis:
     image: redis
-    container_name: trini-redis
+    container_name: tanpo-redis
     restart: always
     ports:
       - 6379:6379
@@ -55,11 +55,11 @@ services:
     command: redis-server /usr/local/etc/redis/redis.conf
   stripe:
     image: stripe/stripe-cli
-    container_name: trini-stripe
+    container_name: tanpo-stripe
     restart: always
     volumes:
       - ./docker/stripe:/root/.config/configstore/stripe.yaml
     command: "listen --api-key ${STRIPE_SECRET_KEY} --forward-to nodejs:${PORT}/payment/webhook"
 networks:
-  trini-network:
+  tanpo-network:
     driver: bridge

@@ -4,6 +4,7 @@ import {
   OpenAPIRegistry,
 } from '@asteasolutions/zod-to-openapi';
 import { Application } from 'express';
+import fs from 'fs';
 import { InfoObject, OpenAPIObject } from 'openapi3-ts/dist/model/openapi31';
 import SwaggerUI from 'swagger-ui-express';
 import { z, ZodRawShape } from 'zod';
@@ -159,7 +160,7 @@ export class DocumentationFactory {
 
     // if the schema is defined, parse it and replace the #/definitions
     // to #/components/schemas
-    if (schema) {
+    if (Object.keys(schema).length > 0) {
       // stringify the schema
       const schemaString = JSON.stringify(schema);
 
@@ -176,6 +177,10 @@ export class DocumentationFactory {
       if (docu.components) {
         docu.components.schemas = parsedSchema.definitions;
       }
+    }
+
+    if (process.env.GENERATE_OPENAPI_JSON === 'true') {
+      fs.writeFileSync('openapi.json', JSON.stringify(docu, null, 2), 'utf-8');
     }
 
     return docu;

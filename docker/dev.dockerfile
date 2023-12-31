@@ -9,7 +9,7 @@ RUN npm ci
 FROM base AS builder
 RUN npm ci
 COPY . .
-RUN npm run generate
+RUN npm run prisma:generate
 RUN npm run build
 
 FROM base

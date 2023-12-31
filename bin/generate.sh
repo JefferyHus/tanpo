@@ -273,7 +273,7 @@ fi
 touch $SCHEMA_PATH
 
 # Write the schema file
-echo "import z from 'zod';
+echo "import z from '@/openapi/default';
 
 export const ${MODULE_CAMEL_CASE}Schema = z.object({});" > $SCHEMA_PATH
 

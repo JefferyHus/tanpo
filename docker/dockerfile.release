@@ -13,7 +13,7 @@ FROM base as builder
 ENV NODE_ENV development
 RUN npm install
 COPY . .
-RUN npm run generate
+RUN npm run prisma:generate
 RUN npm run build
 
 FROM base as release

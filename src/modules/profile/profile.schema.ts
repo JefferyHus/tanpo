@@ -1,7 +1,7 @@
 import { Request } from 'express-serve-static-core';
-import z from 'zod';
 
 import { RouteMethods } from '@/core/types/express.types';
+import z from '@/openapi/default';
 import { GenerateDocumentation } from '@/utils/documentation';
 
 export const ProfileSchema = z.object({
