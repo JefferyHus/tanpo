@@ -1,5 +1,11 @@
 # Utils Folder Documentation
 
+For more detailed information on specific aspects of the "Utils" folder, refer to the following documentation:
+
+- [Error Logging](/documentation/utilities/LOGGER.md): Detailed information on the error logging utility.
+- [OpenAPI Documentation Generation](/documentation/utilities/OPENAPI.md): Detailed information on the OpenAPI documentation generation utility.
+- [Error Type Identification](/documentation/utilities/ERRORS.md): Detailed information on the error type identification utility.
+
 ## Overview
 
 The `utils` folder is an integral part of our project, equipped with a suite of utilities designed to assist developers in executing heavy and time-consuming tasks more efficiently. This folder contains tools for error logging, generating OpenAPI documentation, and identifying error types from various libraries.
