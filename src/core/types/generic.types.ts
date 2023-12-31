@@ -15,7 +15,7 @@ export type SessionCookieSameSite =
   | 'none'
   | undefined;
 export type TokenizedResponse = {
-  userId: number;
+  userId: string;
   token: string;
   refreshToken: string;
 };

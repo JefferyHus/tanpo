@@ -1,6 +1,8 @@
-import { LogLevels } from '@/core/classes/logger/logger.types';
 import * as Sentry from '@sentry/node';
 import { NodeOptions } from '@sentry/node';
+
+import { LogLevels } from '@/core/classes/logger/logger.types';
+
 import { Integration } from './integration.class';
 
 export class SentryIntegration extends Integration {

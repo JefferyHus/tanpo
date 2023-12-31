@@ -1,9 +1,11 @@
+import * as Sentry from '@sentry/node';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
+
 import { GENERIC_ERRORS, HTTP_STATUS_CODES } from '@/constants';
 import { BaseError } from '@/core/classes/errors/base.error';
 import { WinstonIntegration } from '@/core/classes/logger/integrations/winston.class';
 import { LogLevels, LogLevelsEnum } from '@/core/classes/logger/logger.types';
-import * as Sentry from '@sentry/node';
-import { NextFunction, Request, Response } from 'express-serve-static-core';
+
 import { isPrismaKnownError, isZodError } from './error';
 
 export type Context = Record<string, unknown> | string | Array<unknown>;
@@ -92,7 +94,7 @@ export function handleErrorMessage(error: unknown): ErrorObject {
   if (error instanceof BaseError) {
     return {
       code: error.status,
-      cause: error.cause,
+      cause: 'unknown',
       message: error.message,
     };
   }

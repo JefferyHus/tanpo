@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Check if gnupg is installed
 if ! command -v gpg &> /dev/null

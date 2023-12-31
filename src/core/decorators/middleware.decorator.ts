@@ -1,5 +1,6 @@
-import { ROUTER_MIDDLEWARES_METADATA } from '@/constants';
 import { RequestHandler } from 'express-serve-static-core';
+
+import { ROUTER_MIDDLEWARES_METADATA } from '@/constants';
 
 export function Middleware(...handlers: RequestHandler[]): MethodDecorator {
   return (

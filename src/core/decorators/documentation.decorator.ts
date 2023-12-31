@@ -1,6 +1,7 @@
-import { OPENAPI_METADATA } from '@/constants';
 import { RouteConfig } from '@asteasolutions/zod-to-openapi';
 import { ZodArray, ZodObject, ZodRawShape } from 'zod';
+
+import { OPENAPI_METADATA } from '@/constants';
 
 export type DocumentationOptions<T extends ZodRawShape> = {
   path: RouteConfig;

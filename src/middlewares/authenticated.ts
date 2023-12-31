@@ -1,9 +1,10 @@
+import { NextFunction, Request, Response } from 'express-serve-static-core';
+import jwt from 'jsonwebtoken';
+
 import { GENERIC_ERRORS, HTTP_STATUS_CODES, JWT_SECRET } from '@/constants';
 import { LogLevelsEnum } from '@/core/classes/logger/logger.types';
 import { RedisFactory } from '@/redis.factory';
 import { logger } from '@/utils/logger';
-import { NextFunction, Request, Response } from 'express-serve-static-core';
-import jwt from 'jsonwebtoken';
 
 // create an authenticated decorator
 export function Authenticated() {
@@ -36,6 +37,10 @@ export function Authenticated() {
       // call the next middleware
       next();
     } catch (error) {
+      logger(LogLevelsEnum.ERROR, 'Error verifying token', {
+        error,
+      });
+
       return response.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
         code: HTTP_STATUS_CODES.UNAUTHORIZED,
         cause: 'Session not found',

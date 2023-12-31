@@ -1,5 +1,7 @@
-import { logger } from '@/utils/logger';
 import { Stripe } from 'stripe';
+
+import { logger } from '@/utils/logger';
+
 import { LogLevelsEnum } from '../../logger/logger.types';
 import { Payment } from '../payment.abstract';
 import { PaymentCurrency } from '../payment.types';

@@ -1,4 +1,5 @@
 import { HTTP_STATUS_CODES } from '@/constants';
+
 import { BaseError } from './base.error';
 
 export class SessionBaseError extends BaseError {

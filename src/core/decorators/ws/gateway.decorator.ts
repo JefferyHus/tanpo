@@ -1,5 +1,9 @@
 export function WebSocketGateway(port: number): ClassDecorator {
   return (target: any) => {
-    // Reflect.defineMetadata(ROUTER_PATH_METADATA, path, target);
+    const metadata: number[] = Reflect.getMetadata('port', target) ?? [];
+
+    metadata.push(port);
+
+    Reflect.defineMetadata('port', metadata, target);
   };
 }

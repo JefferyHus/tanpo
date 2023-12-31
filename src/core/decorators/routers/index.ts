@@ -1,3 +1,6 @@
+import { NextFunction, Request, Response } from 'express-serve-static-core';
+import { inspect } from 'util';
+
 import {
   GENERIC_ERRORS,
   HTTP_STATUS_CODES,
@@ -8,8 +11,6 @@ import { LogLevelsEnum } from '@/core/classes/logger/logger.types';
 import { Route, RouteMethods } from '@/core/types/express.types';
 import { isPrismaKnownError } from '@/utils/error';
 import { logger } from '@/utils/logger';
-import { NextFunction, Request, Response } from 'express-serve-static-core';
-import { inspect } from 'util';
 
 export type RouteDecoratorMetadata = {
   path: string;

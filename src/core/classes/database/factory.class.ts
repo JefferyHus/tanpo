@@ -1,31 +1,50 @@
-export abstract class Factory {
-  private static _instances: Map<string, any> = new Map<string, any>();
+import { faker } from '@faker-js/faker';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { Service } from 'typedi';
 
-  constructor() {
-    this.init();
-  }
+@Service()
+export abstract class Factory<T> {
+  // TODO: implement a way to return the created instances
+  private returning: Awaited<T>[] = [];
+  protected readonly faker = faker;
 
-  init() {
-    // Override this method to initialize the instance
-  }
+  constructor(
+    protected readonly prisma: PrismaClient,
+    protected readonly collection: string,
+  ) {}
 
-  public static get<T>(type: { new (...args: any[]): T }): T {
-    if (!this._instances.has(type.name)) {
-      this._instances.set(type.name, new type());
+  protected abstract attributes(): Promise<Partial<T>>;
+  protected abstract beforeCreate(data: Partial<T>): Promise<void>;
+  protected abstract afterCreate(data: number): Promise<void>;
+
+  public async create(count = 1): Promise<void> {
+    for (let i = 0; i < count; i++) {
+      const data = await this.attributes();
+
+      // call the beforeCreate hook
+      await this.beforeCreate(data);
+
+      const columns = Prisma.join(
+        Object.keys(data).map((column) => Prisma.raw(`${column}`)),
+      );
+      const values = Prisma.join(
+        Object.values(data).map((value) => {
+          if (typeof value === 'string') {
+            return Prisma.raw(`'${value}'`);
+          }
+
+          return Prisma.raw(`${value}`);
+        }),
+      );
+
+      const query = Prisma.sql`INSERT INTO ${Prisma.raw(
+        this.collection,
+      )} (${columns}) VALUES (${values})`;
+
+      const created = await this.prisma.$executeRaw<T>(query);
+
+      // call the afterCreate hook
+      await this.afterCreate(created);
     }
-
-    return this._instances.get(type.name);
-  }
-
-  public static set<T>(type: { new (...args: any[]): T }, instance: T): void {
-    this._instances.set(type.name, instance);
-  }
-
-  public static save<T>(type: { new (...args: any[]): T }, instance: T): void {
-    this._instances.set(type.name, instance);
-  }
-
-  public static reset(): void {
-    this._instances.clear();
   }
 }

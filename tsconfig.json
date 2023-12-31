@@ -36,5 +36,10 @@
   "include": [
     "src/**/*",
     "src/**/**/*.json"
-  ]
+  ],
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  }
 }

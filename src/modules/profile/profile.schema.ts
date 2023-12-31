@@ -1,35 +1,53 @@
-import { DocumentationOptions } from '@/core/decorators/documentation.decorator';
-import z, { ZodRawShape } from 'zod';
+import { Request } from 'express-serve-static-core';
+import z from 'zod';
 
-export const ProfileSchema = z.object({});
+import { RouteMethods } from '@/core/types/express.types';
+import { GenerateDocumentation } from '@/utils/documentation';
 
-export const ProfileGetDocumentation: DocumentationOptions<ZodRawShape> = {
-  path: {
-    description:
-      'This endpoint will fail to execute and returns a 400 with a json object.',
-    method: 'get',
-    path: '/profile/get',
-    responses: {
-      400: {
-        description: 'Failed to execute',
-        content: {
-          'application/json': {
-            schema: z.object({}),
-          },
-        },
-      },
-      200: {
-        description: 'Returns a json object with a message',
-        content: {
-          'application/json': {
-            schema: z.object({
-              message: z.string(),
-            }),
-          },
-        },
-      }
+export const ProfileSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+});
+
+export const ProfileResponseSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+// Profile Get Documentation
+export const ProfileGetDocumentation = GenerateDocumentation({
+  description: 'Get the current user profile.',
+  name: 'Profile',
+  schema: ProfileSchema,
+  response: ProfileResponseSchema,
+  path: '/profile/get',
+  method: RouteMethods.GET,
+  security: [
+    {
+      authorization: [],
     },
-    tags: ['Profiles'],
-  },
-  schema: z.object({}),
-}
+  ],
+});
+
+// Profile Update Documentation
+export const ProfileUpdateDocumentation = GenerateDocumentation({
+  description: 'Update the current user profile.',
+  name: 'Profile',
+  schema: ProfileSchema,
+  response: ProfileResponseSchema,
+  path: '/profile/update',
+  method: RouteMethods.PUT,
+  security: [
+    {
+      authorization: [],
+    },
+  ],
+});
+
+export type ProfileUpdateRequest = Request<
+  object,
+  object,
+  z.infer<typeof ProfileSchema>
+>;

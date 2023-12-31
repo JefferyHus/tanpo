@@ -1,5 +1,6 @@
 import { Job, Queue, Worker } from 'bullmq';
 import Container from 'typedi';
+
 import { JOB_METADATA, MODULE_METADATA } from './constants';
 import { BaseJob } from './core/classes/job.class';
 import { LogLevelsEnum } from './core/classes/logger/logger.types';

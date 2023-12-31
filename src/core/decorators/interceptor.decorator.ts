@@ -1,5 +1,6 @@
-import { ROUTER_INTERCEPTORS_METADATA } from '@/constants';
 import { NextFunction, Request, Response } from 'express-serve-static-core';
+
+import { ROUTER_INTERCEPTORS_METADATA } from '@/constants';
 
 export type InterceptorFunction = (
   request: Request,

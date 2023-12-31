@@ -9,31 +9,56 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email     String    @unique
   password  String
   name      String?
-  role      Role     @default(client)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  roleId    String?   @db.Uuid
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
   deletedAt DateTime?
 
-  profile   Profile?
+  role    Role?    @relation(fields: [roleId], references: [id])
+  profile Profile?
+
+  @@map("user")
 }
 
-enum Role {
-  admin
-  client
+model Role {
+  id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+
+  users       User[]
+  permissions Permission[]
+
+  @@map("role")
+}
+
+model Permission {
+  id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+
+  roles Role[]
+
+  @@map("permission")
 }
 
 model Profile {
-  id        String   @id @default(uuid())
-  userId    String   @unique
+  id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId    String    @unique @db.Uuid
   firstName String?
   lastName  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
   deletedAt DateTime?
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("profile")
 }

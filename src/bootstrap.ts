@@ -1,11 +1,13 @@
-import { AppFactory } from '@/app.factory';
-import { AppModule } from '@/app.module';
-import { httpErrorHandler, logger } from '@/utils/logger';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import Container from 'typedi';
+
+import { AppFactory } from '@/app.factory';
+import { AppModule } from '@/app.module';
+import { httpErrorHandler, logger } from '@/utils/logger';
+
 import { LogLevelsEnum } from './core/classes/logger/logger.types';
 import { DocumentationFactory } from './documentation.factory';
 import { JobFactory } from './job.factory';

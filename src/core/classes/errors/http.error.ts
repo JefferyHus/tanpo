@@ -1,5 +1,6 @@
-import { BaseError } from './base.error';
 import { HTTP_STATUS_CODES } from '@/constants';
+
+import { BaseError } from './base.error';
 
 export type ErrorConextData = {
   [key: string]: string | number | boolean | null | undefined;

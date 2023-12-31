@@ -51,12 +51,23 @@ declare module 'express-session' {
 declare module 'express-serve-static-core' {
   export interface Request {
     user: {
-      id: number;
-      role: string;
+      id: number | string;
+      role:
+        | string
+        | {
+            name: string;
+          };
     };
     token: {
       access: string;
       refresh: string;
     };
+    stripe: {
+      signature: string;
+    };
   }
+
+  export type RawBodyRequest<T> = T & {
+    rawBody?: Buffer;
+  };
 }

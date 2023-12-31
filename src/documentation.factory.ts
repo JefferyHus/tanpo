@@ -1,4 +1,3 @@
-import schema from '@/openapi/json-schema.json';
 import {
   extendZodWithOpenApi,
   OpenApiGeneratorV31,
@@ -8,6 +7,9 @@ import { Application } from 'express';
 import { InfoObject, OpenAPIObject } from 'openapi3-ts/dist/model/openapi31';
 import SwaggerUI from 'swagger-ui-express';
 import { z, ZodRawShape } from 'zod';
+
+import schema from '@/openapi/json-schema.json';
+
 import { AppFactory } from './app.factory';
 import {
   OPENAPI_METADATA,

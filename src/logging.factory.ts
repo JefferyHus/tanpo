@@ -1,13 +1,15 @@
-import { AppFactory } from '@/app.factory';
-import { SentryIntegration } from '@/core/classes/logger/integrations/sentry.class';
-import { WinstonIntegration } from '@/core/classes/logger/integrations/winston.class';
-import { LogLevelsEnum } from '@/core/classes/logger/logger.types';
 import * as Sentry from '@sentry/node';
 import { ProfilingIntegration } from '@sentry/profiling-node';
 import * as Tracing from '@sentry/tracing';
 import { ErrorRequestHandler, RequestHandler } from 'express-serve-static-core';
 import { IncomingMessage, ServerResponse } from 'http';
 import morgan from 'morgan';
+
+import { AppFactory } from '@/app.factory';
+import { SentryIntegration } from '@/core/classes/logger/integrations/sentry.class';
+import { WinstonIntegration } from '@/core/classes/logger/integrations/winston.class';
+import { LogLevelsEnum } from '@/core/classes/logger/logger.types';
+
 import { logger } from './utils/logger';
 
 export class LoggingFactory {

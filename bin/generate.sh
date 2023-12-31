@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Source the spinner function
 source "$(pwd)/bin/spinner.sh"
@@ -155,7 +155,8 @@ touch $REPOSITORY_PATH
 
 # Write the repository file
 echo "
-import { ManyArgs, Repository } from '@/core/classes/database/repository.class';
+import { Repository } from '@/core/classes/database/repository.class';
+import { ManyArgs } from '@/core/classes/database/types';
 import { Prisma, PrismaClient, ${MODULE_CAMEL_CASE} } from '@prisma/client';
 import { Service } from 'typedi';
 
@@ -176,7 +177,7 @@ export class ${MODULE_CAMEL_CASE}Repository extends Repository<${MODULE_CAMEL_CA
     return this.prisma.${MODULE_LOWER_CAMEL_CASE}.update({ where, data });
   }
 
-  public async delete(query: { id: number }): Promise<${MODULE_CAMEL_CASE}> {
+  public async delete(query: { id: any }): Promise<${MODULE_CAMEL_CASE}> {
     return this.prisma.${MODULE_LOWER_CAMEL_CASE}.delete({ where: query });
   }
 
@@ -184,13 +185,13 @@ export class ${MODULE_CAMEL_CASE}Repository extends Repository<${MODULE_CAMEL_CA
     return this.prisma.${MODULE_LOWER_CAMEL_CASE}.findMany(args);
   }
 
-  public async findUnique(query: { id: number }): Promise<${MODULE_CAMEL_CASE} | null> {
+  public async findUnique(query: { id: any }): Promise<${MODULE_CAMEL_CASE} | null> {
     return this.prisma.${MODULE_LOWER_CAMEL_CASE}.findUnique({
       where: query,
     });
   }
 
-  public async findUniqueOrThrow(query: { id: number }): Promise<${MODULE_CAMEL_CASE}> {
+  public async findUniqueOrThrow(query: { id: any }): Promise<${MODULE_CAMEL_CASE}> {
     return this.prisma.${MODULE_LOWER_CAMEL_CASE}.findUniqueOrThrow({
       where: query,
     });
@@ -282,3 +283,41 @@ if [ -n "$(ps -p $PROGRESS_PID -o pid=)" ]; then
   kill "$PROGRESS_PID" > /dev/null 2>&1
   stop_spinner 0
 fi
+
+# Set the path to the factory file
+FACTORY_PATH="./src/modules/$MODULE_LOWER_SNAKE_CASE/${MODULE_LOWER_SNAKE_CASE}.factory.ts"
+
+# If the factory already exists, exit with an error
+if [ -f "$FACTORY_PATH" ]; then
+  printf "\n\033[0;31m[ERROR]: Factory $MODULE already exists.\033[0m"
+  # Kill the progress animation process
+  kill "$PROGRESS_PID" > /dev/null 2>&1
+  stop_spinner 1
+  exit 1
+fi
+
+# Create the factory file
+touch $FACTORY_PATH
+
+# Write the factory file
+echo "import { Factory } from '@/core/classes/database/factory.class';
+import { LogLevelsEnum } from '@/core/classes/logger/logger.types';
+import { logger } from '@/utils/logger';
+import { ${MODULE_CAMEL_CASE} } from '@prisma/client';
+import { ${MODULE_CAMEL_CASE}Schema } from './${MODULE_LOWER_SNAKE_CASE}.schema';
+
+export class ${MODULE_CAMEL_CASE}Factory extends Factory<${MODULE_CAMEL_CASE}> {
+  protected readonly schema = ${MODULE_CAMEL_CASE}Schema;
+
+  protected async attributes(): Promise<Partial<${MODULE_CAMEL_CASE}>> {
+    return {};
+  }
+
+  public async beforeCreate(data: Partial<${MODULE_CAMEL_CASE}>): Promise<void> {
+    logger(LogLevelsEnum.INFO, 'Creating ${MODULE_LOWER_SNAKE_CASE}...', { data });
+  }
+
+  public async afterCreate(created: ${MODULE_CAMEL_CASE}): Promise<void> {
+    logger(LogLevelsEnum.INFO, 'Created ${MODULE_LOWER_SNAKE_CASE}!', { created });
+  }
+}" > $FACTORY_PATH

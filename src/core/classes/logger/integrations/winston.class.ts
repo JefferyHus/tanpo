@@ -1,5 +1,7 @@
-import { LogLevels } from '@/core/classes/logger/logger.types';
 import winston, { LoggerOptions } from 'winston';
+
+import { LogLevels } from '@/core/classes/logger/logger.types';
+
 import { Integration } from './integration.class';
 
 export class WinstonIntegration extends Integration {
@@ -37,19 +39,6 @@ export class WinstonIntegration extends Integration {
     }
 
     const transports: winston.transport[] = [new winston.transports.Console()];
-
-    if (
-      process.env.DATADOG_LOGGING === 'true' &&
-      process.env.DATADOG_KEY != null
-    ) {
-      transports.push(
-        new winston.transports.Http({
-          host: 'http-intake.logs.datadoghq.com',
-          path: `/api/v2/logs?dd-api-key=${process.env.DATADOG_KEY}&ddsource=nodejs&service=boilerplate&hostname=${process.env.DATADOG_HOSTNAME}`,
-          ssl: true,
-        }),
-      );
-    }
 
     this.logger = winston.createLogger({
       level: process.env.LOG_LEVEL ?? 'debug',

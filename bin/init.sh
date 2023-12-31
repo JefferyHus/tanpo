@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # capture arguments passed to the script
 for ARGUMENT in "$@"
@@ -27,10 +27,10 @@ POSTGRES_PORT=${POSTGRES_PORT:-5432}
 echo "\033[0;32m[INFO]: Checking if any process is already running on server port $PORT\033[0m"
 if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null ; then
   # check if docker container is running on $PORT
-  if docker ps | grep -q "boilerplate-api"; then
+  if docker ps | grep -q "trini-api"; then
     echo "\033[0;31m[ERROR]: Docker container is already running on port $PORT.\033[0m"
     echo "\033[0;32m[INFO]: Stopping the docker container...\033[0m"
-    docker stop boilerplate-api
+    docker stop trini-api
   else
     echo "\033[0;31m[ERROR]: Something is already running on port $PORT.\033[0m"
     exit 1
@@ -41,10 +41,10 @@ fi
 echo "\033[0;32m[INFO]: Checking if any process is already running on database port $POSTGRES_PORT\033[0m"
 if lsof -Pi :$POSTGRES_PORT -sTCP:LISTEN -t >/dev/null ; then
   # check if docker container is running on $POSTGRES_PORT
-  if docker ps | grep -q "boilerplate-database"; then
+  if docker ps | grep -q "trini-database"; then
     echo "\033[0;31m[ERROR]: Docker container is already running on port $POSTGRES_PORT.\033[0m"
     echo "\033[0;32m[INFO]: Stopping the docker container...\033[0m"
-    docker stop boilerplate-database
+    docker stop trini-database
   else
     echo "\033[0;31m[ERROR]: Something is already running on port $POSTGRES_PORT.\033[0m"
     exit 1
@@ -61,8 +61,8 @@ export POSTGRES_PORT=$POSTGRES_PORT
 
 # create docker network if it does not exist
 echo "\033[0;32m[INFO]: Creating docker network...\033[0m"
-if ! docker network ls | grep -q "boilerplate_network"; then
-  docker network create boilerplate_network
+if ! docker network ls | grep -q "trini_network"; then
+  docker network create trini_network
 fi
 
 # build the project
@@ -78,12 +78,13 @@ if [ "$NODE_ENV" = "production" ]; then
   docker compose --file prod.compose.yml up -d --build
 else
   # build docker images
+  docker compose --file dev.compose.yml build --no-cache --force-rm --parallel
   docker compose --file dev.compose.yml up -d --build
 fi
 
 # await for the docker container to start
 echo "\033[0;32m[INFO]: Waiting for the docker container to start...\033[0m"
-while [ "$(docker inspect -f '{{.State.Running}}' boilerplate-api)" != "true" ]; do
+while [ "$(docker inspect -f '{{.State.Running}}' trini-api)" != "true" ]; do
   sleep 1
 done
 echo "\033[0;32m[INFO]: Docker container is up and running...\033[0m"
@@ -98,16 +99,16 @@ if [ "$MIGRATE" = "true" ]; then
   elif [ "$MIGRATE_NAME" ]; then
     # if the environment is development
     # run prisma migrate dev with passed argument
-    docker exec boilerplate-api npx prisma migrate dev --name $MIGRATE_NAME
+    docker exec trini-api npx prisma migrate dev --name $MIGRATE_NAME
   else
     # fallback to prisma migrate dev
     # this will run all the migrations
-    docker exec boilerplate-api npx prisma migrate dev
+    docker exec trini-api npx prisma migrate dev
   fi
 fi
 
 # follow the logs if the environment is development
 if [ "$NODE_ENV" = "development" ]; then
   echo "\033[0;32m[INFO]: Following the logs...\033[0m"
-  docker logs --tail 20 boilerplate-api --follow
+  docker logs --tail 20 trini-api --follow
 fi

@@ -160,6 +160,10 @@ export const GENERIC_MESSAGES = {
   SUCCESS: 'Success',
 };
 
+// Body Parser metadata keys
+export const BODY_PARSER_METADATA = '__body_parser__';
+export const BODY_PARSER_OPTIONS_METADATA = '__body_parser_options__';
+
 // Router metadata keys
 export const ROUTER_METADATA = '__router__';
 export const ROUTER_PATH_METADATA = '__router_path__';

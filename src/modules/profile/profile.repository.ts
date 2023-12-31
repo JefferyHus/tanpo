@@ -1,7 +1,12 @@
-
-import { ManyArgs, Repository } from '@/core/classes/database/repository.class';
 import { Prisma, PrismaClient, Profile } from '@prisma/client';
 import { Service } from 'typedi';
+
+import { Repository } from '@/core/classes/database/repository.class';
+import {
+  FilterQuery,
+  ManyArgs,
+  UpdateQuery,
+} from '@/core/classes/database/types';
 
 @Service()
 export class ProfileRepository extends Repository<Profile> {
@@ -9,7 +14,9 @@ export class ProfileRepository extends Repository<Profile> {
     super(prisma, 'profile');
   }
 
-  public async create(data: Prisma.ProfileUncheckedCreateInput): Promise<Profile> {
+  public async create(
+    data: Prisma.ProfileUncheckedCreateInput,
+  ): Promise<Profile> {
     return this.prisma.profile.create({ data });
   }
 
@@ -17,7 +24,13 @@ export class ProfileRepository extends Repository<Profile> {
     where: Prisma.ProfileWhereUniqueInput,
     data: Prisma.ProfileUpdateInput,
   ): Promise<Profile> {
-    return this.prisma.profile.update({ where, data });
+    return this.prisma.profile.update({
+      where: {
+        id: where.id,
+        userId: where.userId,
+      },
+      data,
+    });
   }
 
   public async delete(query: { id: string }): Promise<Profile> {
@@ -39,5 +52,12 @@ export class ProfileRepository extends Repository<Profile> {
       where: query,
     });
   }
-}
 
+  public async findOneByUserId(userId: string): Promise<Profile | null> {
+    return this.prisma.profile.findFirst({
+      where: {
+        userId,
+      },
+    });
+  }
+}

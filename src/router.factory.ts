@@ -1,11 +1,20 @@
-import { Router } from 'express';
-import { RequestHandler } from 'express-serve-static-core';
-import Container from 'typedi';
+import { NextHandleFunction } from 'connect';
+import express, { Router } from 'express';
 import {
+  Handler,
+  RawBodyRequest,
+  RequestHandler,
+} from 'express-serve-static-core';
+import { IncomingMessage, ServerResponse } from 'http';
+import Container from 'typedi';
+
+import {
+  BODY_PARSER_OPTIONS_METADATA,
   ROUTER_INTERCEPTORS_METADATA,
   ROUTER_METHODS_METADATA,
   ROUTER_MIDDLEWARES_METADATA,
 } from './constants';
+import { ParserOptions } from './core/decorators/http/parser.decorator';
 import { Interceptor, Middleware, Route } from './core/types/express.types';
 import { Identifier } from './core/types/generic.types';
 
@@ -41,8 +50,17 @@ export class RouterFactory {
         // bind the instance to the controller method
         route.function = route.function.bind(instance);
 
-        // prepare the route middlewares and interceptors to be added to the router
-        let routeMiddlewares: Middleware[] = [];
+        // construct the route properties
+        const routeProperties: {
+          path: string;
+          middlewares?: Middleware[];
+          interceptors?: Interceptor[];
+          parserOptions?: NextHandleFunction;
+          function: Handler;
+        } = {
+          path: route.path,
+          function: route.function,
+        };
 
         // add the middlewares to the router
         if (middlewares.length > 0) {
@@ -51,16 +69,24 @@ export class RouterFactory {
             middleware.bind(instance);
           });
 
-          routeMiddlewares = [...middlewares];
+          routeProperties['middlewares'] = middlewares;
         }
 
-        // if the route has both middlewares and interceptors, add them to the router
-        if (routeMiddlewares.length > 0) {
-          router[route.method](route.path, ...routeMiddlewares, route.function);
-        } else {
-          // if the route has no middlewares or interceptors, add it to the router
-          router[route.method](route.path, route.function);
+        // get http parser options from the metadata
+        const parserOptions = this.resolveParserOptions(route.handler);
+
+        // add the parser options to the router
+        if (parserOptions) {
+          routeProperties['parserOptions'] = parserOptions;
         }
+
+        // build the route
+        router[route.method](
+          routeProperties.path,
+          routeProperties.parserOptions ?? [],
+          routeProperties.middlewares ?? [],
+          routeProperties.function,
+        );
       });
     }
 
@@ -105,5 +131,70 @@ export class RouterFactory {
     }
 
     return interceptors;
+  }
+
+  private static resolveParserOptions(identifier: RequestHandler) {
+    // get the parser options from the metadata
+    const routerParserOptions: ParserOptions = Reflect.getMetadata(
+      BODY_PARSER_OPTIONS_METADATA,
+      identifier,
+    );
+
+    // build a middleware to parse the request body
+    // express already has a middleware to parse the request body
+    // (e.g. express.json(), express.urlencoded(), express.raw(), etc.)
+    // determine which middleware to use based on the parser options
+    if (routerParserOptions) {
+      if (routerParserOptions.body === 'json') {
+        // check if verify function is set
+        return express.json({
+          inflate: routerParserOptions.inflate,
+          strict: routerParserOptions.strict,
+          limit: routerParserOptions.limit,
+          type: routerParserOptions.type,
+        });
+      }
+
+      if (routerParserOptions.body === 'urlencoded') {
+        // check if verify function is set
+        return express.urlencoded({
+          inflate: routerParserOptions.inflate,
+          extended: routerParserOptions.extended,
+          limit: routerParserOptions.limit,
+          type: routerParserOptions.type,
+        });
+      }
+
+      if (routerParserOptions.body === 'raw') {
+        // check if verify function is set
+        return express.raw({
+          inflate: routerParserOptions.inflate,
+          limit: routerParserOptions.limit,
+          type: routerParserOptions.type,
+          verify: (
+            request: RawBodyRequest<IncomingMessage>,
+            _response: ServerResponse<IncomingMessage>,
+            buffer: Buffer,
+          ) => {
+            if (Buffer.isBuffer(buffer)) {
+              request.rawBody = buffer;
+            }
+
+            return true;
+          },
+        });
+      }
+
+      if (routerParserOptions.body === 'text') {
+        // check if verify function is set
+        return express.text({
+          inflate: routerParserOptions.inflate,
+          limit: routerParserOptions.limit,
+          type: routerParserOptions.type,
+        });
+      }
+    }
+
+    return null;
   }
 }

@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import Container from 'typedi';
 import { ZodRawShape } from 'zod';
+
 import { MODULE_METADATA, ROUTER_PATH_METADATA } from './constants';
 import { DocumentationOptions } from './core/decorators/documentation.decorator';
 import { Identifier, Instance } from './core/types/generic.types';
