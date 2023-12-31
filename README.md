@@ -124,3 +124,24 @@ export class YourController {
   constructor(private readonly yourService: Your Service) {}
 }
 ```
+
+## To-Do List
+
+### Documentation
+
+- [ ] Add documentation for the core features (classes, decorators, and types)
+- [ ] Add service documentation
+- [ ] Add repository documentation
+- [ ] Add seeding scripts documentation
+- [ ] Add job scheduler documentation
+
+### Implementation
+
+- [ ] Implement the interceptor logic
+- [ ] Implement WebSocket logic
+- [ ] Implement RPC logic
+- [ ] Implement testing logic (add a few examples)
+
+### Maintenance
+
+- [ ] Clean the core folder
