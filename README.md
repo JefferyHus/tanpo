@@ -34,7 +34,7 @@ Ensure the following software is installed on your PC:
 - Node.js (>= 16.*)
 - NPM (>= 8.*.*)
 
-First, copy `.env.example` to `.env` and update values (contact @jefferyhus for keys). Set `DEBUG_MODE` in `.env` to:
+First, copy `.env.example` to `.env` and update values. Set `DEBUG_MODE` in `.env` to:
 
 ```bash
 - 'sentry'
