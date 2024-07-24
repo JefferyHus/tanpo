@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
 import { NodeOptions } from '@sentry/node';
+import { Application } from 'express';
 
 import { LogLevels } from '@/core/classes/logger/logger.types';
 
@@ -16,6 +17,10 @@ export class SentryIntegration extends Integration {
     });
   }
 
+  public setupExpress(app: Application) {
+    return Sentry.setupExpressErrorHandler(app);
+  }
+
   public log(
     level: LogLevels,
     message: string,
@@ -28,11 +33,7 @@ export class SentryIntegration extends Integration {
     });
   }
 
-  public handlers(): typeof Sentry.Handlers {
-    return Sentry.Handlers;
-  }
-
   public initialized(): boolean {
-    return Sentry.getCurrentHub().getClient() !== null;
+    return Sentry.getClient() !== null;
   }
 }

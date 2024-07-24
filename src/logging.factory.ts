@@ -1,7 +1,6 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
-import * as Tracing from '@sentry/tracing';
-import { ErrorRequestHandler, RequestHandler } from 'express-serve-static-core';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import { RequestHandler } from 'express-serve-static-core';
 import { IncomingMessage, ServerResponse } from 'http';
 import morgan from 'morgan';
 
@@ -46,20 +45,17 @@ export class LoggingFactory {
         return event;
       },
       integrations: [
-        new Sentry.Integrations.Http({ tracing: true }),
-        new Sentry.Integrations.OnUncaughtException({
+        Sentry.httpIntegration(),
+        Sentry.onUncaughtExceptionIntegration({
           onFatalError: (error) => {
             Sentry.captureException(error);
             process.exit(1);
           },
         }),
-        new Sentry.Integrations.OnUnhandledRejection({
+        Sentry.onUnhandledRejectionIntegration({
           mode: 'strict',
         }),
-        new Tracing.Integrations.Express({
-          app: AppFactory.app,
-        }),
-        new ProfilingIntegration(),
+        nodeProfilingIntegration(),
       ],
       tracesSampleRate: Number(process.env.SENTRY_TRACES_SAMPLE_RATE),
       profilesSampleRate: Number(process.env.SENTRY_PROFILES_SAMPLE_RATE),
@@ -67,23 +63,8 @@ export class LoggingFactory {
     this.winston.setup();
   }
 
-  static request(): RequestHandler {
-    return Sentry.Handlers.requestHandler();
-  }
-
-  static error(): ErrorRequestHandler {
-    return Sentry.Handlers.errorHandler({
-      shouldHandleError(error) {
-        // Capture all 400, 404 and 500 errors
-        return (
-          error.status === 400 || error.status === 404 || error.status === 500
-        );
-      },
-    });
-  }
-
-  static tracing(): RequestHandler {
-    return Sentry.Handlers.tracingHandler();
+  static express(): void {
+    this.sentry.setupExpress(AppFactory.app);
   }
 
   static morgan(): RequestHandler {

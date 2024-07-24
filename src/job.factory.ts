@@ -1,4 +1,4 @@
-import { Job, Queue, Worker } from 'bullmq';
+import { Job, Queue, RepeatableJob, Worker } from 'bullmq';
 import Container from 'typedi';
 
 import { JOB_METADATA, MODULE_METADATA } from './constants';
@@ -15,15 +15,7 @@ export class JobFactory {
   private static _instance: JobFactory;
   private _queue: Queue;
   private _worker: Worker;
-  private _jobs: {
-    key: string;
-    name: string;
-    id: string;
-    endDate: number;
-    tz: string;
-    pattern: string;
-    next: number;
-  }[] = [];
+  private _jobs: RepeatableJob[] = [];
 
   private constructor() {
     this._queue = new Queue('jobs', {
@@ -80,15 +72,7 @@ export class JobFactory {
     return JobFactory._instance;
   }
 
-  public get jobs(): {
-    key: string;
-    name: string;
-    id: string;
-    endDate: number;
-    tz: string;
-    pattern: string;
-    next: number;
-  }[] {
+  public get jobs(): RepeatableJob[] {
     return JobFactory.instance._jobs;
   }
 

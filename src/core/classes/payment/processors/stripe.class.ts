@@ -55,7 +55,7 @@ export class StripePayment extends Payment {
   init(): this {
     // Initialize Stripe payment gateway
     this._stripe = new Stripe(this._token, {
-      apiVersion: '2022-11-15',
+      apiVersion: '2024-06-20',
     });
 
     return this;

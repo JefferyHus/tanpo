@@ -1,4 +1,4 @@
-FROM node:18 AS base
+FROM node:20 AS base
 ENV NODE_ENV development
 WORKDIR /app
 COPY package*.json ./

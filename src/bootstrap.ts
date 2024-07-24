@@ -27,11 +27,6 @@ export function bootstrap(prisma: PrismaClient) {
   // create the logger
   LoggingFactory.create();
 
-  // the request handler must be the first middleware on the app
-  app.use(LoggingFactory.request());
-  // tracingHandler creates a trace for every incoming request
-  app.use(LoggingFactory.tracing());
-
   // morgan tracing middleware
   app.use(LoggingFactory.morgan());
 
@@ -107,7 +102,7 @@ export function bootstrap(prisma: PrismaClient) {
   });
 
   // the error handler must be before any other error middleware and after all controllers
-  app.use(LoggingFactory.error());
+  LoggingFactory.express();
 
   // the error handler must be after all other error middleware and after the routes
   app.use(httpErrorHandler());

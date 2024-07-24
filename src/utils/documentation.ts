@@ -1,4 +1,4 @@
-import { ZodArray, ZodObject, ZodRawShape } from 'zod';
+import { util, ZodArray, ZodObject, ZodRawShape } from 'zod';
 
 import { DocumentationOptions } from '@/core/decorators/documentation.decorator';
 import { RouteMethods } from '@/core/types/express.types';
@@ -6,13 +6,18 @@ import { ErrorResponse, ResponseSchema } from '@/core/types/response.type';
 
 export function MapKeysToTrue<T extends object>(
   keys: Array<keyof T>,
-): { [K in keyof T]: true } {
-  return keys.reduce<{ [K in keyof T]: true }>((accumulator, currentKey) => {
-    return {
-      ...accumulator,
-      [currentKey]: true,
-    };
-  }, {} as { [K in keyof T]: true });
+): util.Exactly<{ [K in keyof T]?: true }, { [K in keyof T]: true }> {
+  return keys.reduce<
+    util.Exactly<{ [K in keyof T]?: true }, { [K in keyof T]: true }>
+  >(
+    (accumulator, currentKey) => {
+      return {
+        ...accumulator,
+        [currentKey]: true,
+      };
+    },
+    {} as util.Exactly<{ [K in keyof T]?: true }, { [K in keyof T]: true }>,
+  );
 }
 
 export function GenerateResponseSchema<T extends ZodRawShape>(options: {

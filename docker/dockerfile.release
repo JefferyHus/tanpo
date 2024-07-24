@@ -1,7 +1,7 @@
 # Build: docker build -f docker/dockerfile.release -t production .
 # BuildX: docker buildx build -f docker/dockerfile.release -t production --platform linux/amd64,linux/arm64,linux/arm/v7 --push .
 # Run: docker run -it --rm -p 3000:3000 -v $(pwd):/app  --env-file .env production
-FROM node:18 as base
+FROM node:20 as base
 WORKDIR /app
 COPY package*.json ./
 
