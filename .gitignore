@@ -131,3 +131,6 @@ graphql.schema.json
 
 # Mac files
 .DS_Store
+
+# OpenAPI generated json
+openapi.json

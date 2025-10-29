@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   nodejs:
     image: tanpo/api
@@ -23,7 +22,7 @@ services:
       - redis
   # Database
   database:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: tanpo-database
     restart: always
     ports:
@@ -35,16 +34,8 @@ services:
     volumes:
       - ./docker/database/docker-entrypoint-initdb/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./docker/database/data:/var/lib/postgresql/data
-  adminer:
-    image: adminer
-    container_name: tanpo-adminer
-    restart: always
-    ports:
-      - 8080:8080
-    links:
-      - database
   redis:
-    image: redis
+    image: redis:7-alpine
     container_name: tanpo-redis
     restart: always
     ports:

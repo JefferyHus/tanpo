@@ -1,4 +1,4 @@
-import RedisStore from 'connect-redis';
+import { RedisStore } from 'connect-redis';
 import { RequestHandler } from 'express-serve-static-core';
 import session, { SessionOptions, Store } from 'express-session';
 import Redis from 'ioredis';
